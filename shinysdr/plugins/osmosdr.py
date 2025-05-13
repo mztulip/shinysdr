@@ -115,11 +115,16 @@ __all__.append('OsmoSDRProfile')
 
 def profile_from_device_string(device_string):
     # TODO: The input is actually an "args" string, which contains multiple devices space-separated. We should support this, but it is hard because osmosdr does not export the internal args_to_vector function and parsing it ourselves would need to be escaping-aware.
-    params = {k: v for k, v in osmosdr.device_t(six.ensure_str(device_string)).items()}
-    for param_key in params:
-        if param_key in _default_profiles:
-            # is a device of this type
-            return _default_profiles[param_key]
+    # print(f"Device string: {device_string}")
+    # source = osmosdr.source(args="hackrf=0")
+    # print(source.get_device_name())
+    # sys.exit(1)
+    # params = {k: v for k, v in osmosdr.device_t(six.ensure_str(device_string)).items()}
+    # for param_key in params:
+    #     if param_key in _default_profiles:
+    #         # is a device of this type
+    #         return _default_profiles[param_key]
+    return _default_profiles["hackrf"]
     # no match / unknown
     return OsmoSDRProfile()
 
@@ -581,10 +586,15 @@ def _install_gain_cell(self, source_ref, rxd_ref, name):
 
 def convert_osmosdr_range(meta_range, add_zero=False, transform=lambda f: f, **kwargs):
     # TODO: Recognize step values from osmosdr
+ 
     subranges = []
-    for i in six.moves.range(0, meta_range.size()):
-        single_range = meta_range[i]
-        subranges.append((transform(single_range.start()), transform(single_range.stop())))
-    if add_zero or not subranges:  # don't generate an invalid empty RangeT
-        subranges[0:0] = [(0, 0)]
+    # It was used in oldosmosdr
+    # for i in six.moves.range(0, meta_range.size()):
+    #     single_range = meta_range[i]
+        
+    # if add_zero or not subranges:  # don't generate an invalid empty RangeT
+    #     subranges[0:0] = [(0, 0)]
+
+    subranges.append((transform(meta_range.start()), transform(meta_range.stop())))
+    
     return RangeT(subranges, **kwargs)

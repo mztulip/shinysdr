@@ -32,7 +32,8 @@ from twisted.web import static
 from zope.interface import Interface, implementer
 
 from gnuradio import gr
-from gnuradio import gru
+# TODO reapair not working in gnuradio > 3.8
+# from gnuradio import gru
 
 try:
     import air_modes
@@ -108,8 +109,8 @@ class ModeSDemodulator(gr.hier_block2, ExportedState):
                 reactor.callFromThread(parser, msg.to_string())
             except Exception:
                 print(traceback.format_exc())
-        
-        self.__msgq_runner = gru.msgq_runner(hex_msg_queue, msq_runner_callback)
+        # TODO reapair not working in gnuradio > 3.8
+        # self.__msgq_runner = gru.msgq_runner(hex_msg_queue, msq_runner_callback)
         
         def parsed_callback(msg):
             timestamp = time.time()
