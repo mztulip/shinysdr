@@ -7,6 +7,46 @@ ShinySDR is the software component of a software-defined radio receiver. When co
 
 * **[Installing ShinySDR](https://shinysdr.switchb.org/manual/installation)**
 
+
+Installing on Arch under virtual env
+---------------------
+It was tested under Arch Linux with Hackrf.
+Python 3.13, GNU Radio 3.10.12
+Helpful instruction: https://s-martin.github.io/sdr/shinysdr/raspberrypi/2023/05/21/shinysdr.html
+
+`yay gnuradio`
+
+`python -m venv .`
+`source bin/activate`
+`pip install attrs setuptools ephem pyasn1 pyasn1-modules pyserial six twisted service_identity pmt ephem txws`
+
+Under virtualenv there is neccessary to have access to gnuradio and osmosdr.
+Explanation `https://qoherent.ai/blog/2402-gnu_radio_python_virtual_environment_venv/`
+(I also added numpy instead installing from pip).
+```
+ln -s /usr/lib/python3.13/site-packages/gnuradio/ lib/python3.13/site-packages/gnuradio
+ln -s /usr/lib/python3.13/site-packages/numpy/ lib/python3.13/site-packages/numpy
+ln -s /usr/lib/python3.13/site-packages/osmosdr/ lib/python3.13/site-packages/osmosdr
+```
+
+Building python package
+`python3 setup.py build`
+`python3 setup.py install`
+
+Then create config:
+`shinysdr --create ./shinysdr-config`
+I modified config.py from created dir.
+`config.devices.add(u'osmo', OsmoSDRDevice('hackrf=0'))`
+`root_cap=None`
+
+Unfortunately txws does not work after installing using pip.
+After installation txws.py must be modified as in this pull request(lib/python3.13/site-packages/txws.py):
+`https://github.com/MostAwesomeDude/txWS/pull/34/files`
+
+Now shinysdr can be started.
+`shinysdr shinysdr-config/`
+
+
 Copyright and License
 ---------------------
 
