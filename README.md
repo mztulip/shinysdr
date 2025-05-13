@@ -17,33 +17,46 @@ Helpful instruction: https://s-martin.github.io/sdr/shinysdr/raspberrypi/2023/05
 `yay gnuradio`
 
 `python -m venv .`
-`source bin/activate`
-`pip install attrs setuptools ephem pyasn1 pyasn1-modules pyserial six twisted service_identity pmt ephem txws`
 
-Under virtualenv there is neccessary to have access to gnuradio and osmosdr.
+`source bin/activate`
+
+`pip install attrs setuptools ephem pyasn1 pyasn1-modules pyserial six twisted service_identity ephem txws`
+
+Under virtualenv there is neccessary to have access to gnuradio, pmt and osmosdr
 Explanation `https://qoherent.ai/blog/2402-gnu_radio_python_virtual_environment_venv/`
 (I also added numpy instead installing from pip).
+
 ```
 ln -s /usr/lib/python3.13/site-packages/gnuradio/ lib/python3.13/site-packages/gnuradio
-ln -s /usr/lib/python3.13/site-packages/numpy/ lib/python3.13/site-packages/numpy
 ln -s /usr/lib/python3.13/site-packages/osmosdr/ lib/python3.13/site-packages/osmosdr
+ln -s /usr/lib/python3.13/site-packages/pmt/ lib/python3.13/site-packages/pmt
+ln -s /usr/lib/python3.13/site-packages/numpy/ lib/python3.13/site-packages/numpy
 ```
 
 Building python package
+
 `python3 setup.py build`
+
 `python3 setup.py install`
 
 Then create config:
+
 `shinysdr --create ./shinysdr-config`
+
 I modified config.py from created dir.
+
 `config.devices.add(u'osmo', OsmoSDRDevice('hackrf=0'))`
+
 `root_cap=None`
 
 Unfortunately txws does not work after installing using pip.
+
 After installation txws.py must be modified as in this pull request(lib/python3.13/site-packages/txws.py):
+
 `https://github.com/MostAwesomeDude/txWS/pull/34/files`
 
 Now shinysdr can be started.
+
 `shinysdr shinysdr-config/`
 
 
