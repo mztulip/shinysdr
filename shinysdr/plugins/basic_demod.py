@@ -26,6 +26,7 @@ from zope.interface import implementer
 from gnuradio import gr
 from gnuradio import blocks
 from gnuradio import analog
+from gnuradio.filter import window
 from gnuradio import filter as grfilter  # don't shadow builtin
 from gnuradio.analog import fm_emph
 from gnuradio.filter import firdes
@@ -180,7 +181,7 @@ def design_lofi_audio_filter(rate, lowpass):
             rate,
             upper,
             transition,
-            firdes.WIN_HAMMING)
+            window.WIN_HAMMING)
     else:
         return firdes.band_pass(
             1.0,
@@ -188,7 +189,7 @@ def design_lofi_audio_filter(rate, lowpass):
             500,
             upper,
             transition,
-            firdes.WIN_HAMMING)
+            window.WIN_HAMMING)
 
 
 class IQDemodulator(SquelchMixin, SimpleAudioDemodulator):
@@ -320,7 +321,7 @@ class AMDemodulator(SquelchMixin, SimpleAudioDemodulator):
                 _am_lower_cutoff_freq if upper else -_am_audio_bandwidth,
                 _am_audio_bandwidth if upper else -_am_lower_cutoff_freq,
                 1000,
-                firdes.WIN_HAMMING))
+                window.WIN_HAMMING))
         last = self.__make_dc_blocker()
         self.connect(first, blocks.complex_to_real(), last)
         return first, last
@@ -610,7 +611,7 @@ class WFMDemodulator(FMDemodulator):
                     stereo_rate,
                     15000,
                     5000,
-                    firdes.WIN_HAMMING))
+                    window.WIN_HAMMING))
 
         stereo_pilot_filter = grfilter.fir_filter_fcc(
             1,  # decimation
@@ -733,7 +734,7 @@ class SSBDemodulator(SimpleAudioDemodulator):
                 band_filter_low + self.__offset,
                 band_filter_high + self.__offset,
                 band_filter_width,
-                firdes.WIN_HAMMING))
+                window.WIN_HAMMING))
         self.__filter_shape = BandShape.bandpass_transition(
             low=band_filter_low,
             high=band_filter_high,

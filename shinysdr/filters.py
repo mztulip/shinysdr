@@ -172,7 +172,7 @@ class _FilterPlanDecimatingStage(_FilterPlanStage):
             self.input_rate,
             (user_inner + limit) / 2,
             limit - user_inner,
-            firdes.WIN_HAMMING)
+            window.WIN_HAMMING)
     
     def explain(self):
         fx = 'freq xlate and ' if self.freq_xlating else ''
@@ -189,7 +189,7 @@ class _FilterPlanFinalDecimatingStage(_FilterPlanDecimatingStage):
             self.input_rate,
             final_cutoff,
             final_transition,
-            firdes.WIN_HAMMING)
+            window.WIN_HAMMING)
     
     def explain(self):
         return 'final filter and ' + super(_FilterPlanFinalDecimatingStage, self).explain()
@@ -204,17 +204,28 @@ class _FilterPlanRationalResamplerStage(_FilterPlanStage):
 
     def create_block(self, taps):
         assert taps is not None
-        return grfilter.rational_resampler_base_ccf(
+        return grfilter.rational_resampler_ccf(
             interpolation=self.interpolation,
             decimation=self.decimation,
             taps=taps)
     
     def calculate_taps(self, final_cutoff, final_transition):
         # TODO: This might be internal, and we eventually want to integrate it in the plan anyway
-        return rational_resampler.design_filter(
-            interpolation=self.interpolation,
-            decimation=self.decimation,
-            fractional_bw=0.4)
+        # return filter_design.design_filter(
+        #     interpolation=self.interpolation,
+        #     decimation=self.decimation,
+        #     fractional_bw=0.4)
+        fractional_bw = 0.4
+        rate = max(self.interpolation, self.decimation)
+        cutoff = 0.5* fractional_bw
+        transition_width = fractional_bw * 0.1
+        return firdes.low_pass(
+                gain=self.interpolation, 
+                sampling_freq=1.0,
+                cutoff_freq=cutoff,
+                transition_width=transition_width,
+                window=window.WIN_HAMMING
+                )
     
     def explain(self):
         return 'rational_resampler by %s/%s (stage rates %s/%s)' % (self.interpolation, self.decimation, self.output_rate, self.input_rate)

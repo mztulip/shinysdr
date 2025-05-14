@@ -20,17 +20,15 @@ Helpful instruction: https://s-martin.github.io/sdr/shinysdr/raspberrypi/2023/05
 
 `source bin/activate`
 
-`pip install attrs setuptools ephem pyasn1 pyasn1-modules pyserial six twisted service_identity ephem txws`
+`pip install attrs setuptools ephem pyasn1 pyasn1-modules pyserial six twisted service_identity ephem txws numpy`
 
 Under virtualenv there is neccessary to have access to gnuradio, pmt and osmosdr
 Explanation `https://qoherent.ai/blog/2402-gnu_radio_python_virtual_environment_venv/`
-(I also added numpy instead installing from pip).
 
 ```
 ln -s /usr/lib/python3.13/site-packages/gnuradio/ lib/python3.13/site-packages/gnuradio
 ln -s /usr/lib/python3.13/site-packages/osmosdr/ lib/python3.13/site-packages/osmosdr
 ln -s /usr/lib/python3.13/site-packages/pmt/ lib/python3.13/site-packages/pmt
-ln -s /usr/lib/python3.13/site-packages/numpy/ lib/python3.13/site-packages/numpy
 ```
 
 Building python package
